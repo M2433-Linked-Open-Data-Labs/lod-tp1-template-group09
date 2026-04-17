@@ -4,82 +4,143 @@
 
 - **Module** : Linked Open Data
 - **TP** : TP1 - Introduction aux données ouvertes liées
-- **Groupe** :
-- **Étudiants** :
-- **Date** :
+- **Groupe** : Groupe-09
+- **Étudiants** : (à compléter)
+- **Date** : 2026
 
-## Consigne
-
-Ce rapport est à remettre **avant la prochaine séance**. Il constitue une **étude distincte** du travail réalisé pendant le TP1 en classe et prépare directement le TP2.
+---
 
 ## 1. Introduction
 
-Présentez en quelques lignes le contexte du TP, le jeu de données choisi, les entités retenues pour le travail hors séance et le problème d'ingénierie des données que vous étudiez.
+Dans le cadre du TP1 sur les Linked Open Data, nous avons étudié un jeu de données portant sur les établissements de l’enseignement supérieur public au Maroc (2024-2025), publié par le MESRSI.
+
+L’objectif de ce travail hors séance est d’analyser le potentiel de transformation de ce dataset en données liées, en identifiant les entités principales, les possibilités d’appariement avec des référentiels externes, ainsi que les contraintes techniques liées à la qualité et à la structuration des données.
+
+Nous nous concentrons principalement sur trois types d’entités : les universités, les établissements (facultés, écoles, instituts) et les villes, qui constituent les éléments centraux pour une future modélisation RDF.
+
+---
 
 ## 2. Types d'entités étudiés
 
-Présentez :
+Les entités retenues sont :
 
-- les `2 à 3` types d'entités retenus pour le travail hors séance
-- les raisons de ce choix
-- les champs ou indices disponibles pour les apparier à des référentiels externes
+- **Université**
+- **Établissement (faculté, école, institut)**
+- **Ville**
+
+### Justification du choix
+
+- L’**université** constitue une entité administrative centrale, qui regroupe plusieurs établissements.
+- L’**établissement** représente l’unité réelle d’observation du dataset et porte la majorité des informations (adresse, effectifs, contacts).
+- La **ville** permet de désambiguïser les entités et constitue un point d’ancrage géographique essentiel.
+
+### Indices d’appariement disponibles
+
+Les principaux champs utilisés pour l’appariement sont :
+
+- Nom de l’université
+- Nom de l’établissement
+- Acronyme (ex : ENSIAS, EMI, ENCG)
+- Ville
+- Adresse
+
+Ces indices permettent de construire des correspondances avec des référentiels externes, bien que leur qualité varie selon les cas.
+
+---
 
 ## 3. Benchmark des référentiels externes
 
-Comparez au moins deux référentiels externes étudiés pour vos entités cibles :
+### Référentiels comparés
 
-- couverture
-- précision apparente
-- qualité des identifiants
-- richesse sémantique
-- facilité d'utilisation pour un futur alignement
+| Référentiel | URL | Types d'entités couverts | Intérêt potentiel | Limites observées |
+|-------------|-----|--------------------------|-------------------|-------------------|
+| Wikidata | https://www.wikidata.org | Universités, Villes, Établissements | Identifiants stables, multilingue, riche sémantique | Couverture incomplète |
+| GeoNames | https://www.geonames.org | Villes, Régions | Identifiants géographiques, coordonnées | Pas d’établissements |
+| data.gov.ma | https://data.gov.ma | Universités, Établissements | Source officielle nationale | Pas d’identifiants stables |
+
+### Analyse comparative
+
+- **Couverture** : Wikidata couvre bien les universités, GeoNames couvre les villes, data.gov.ma est exhaustif mais peu structuré.
+- **Qualité des identifiants** : Wikidata et GeoNames offrent des identifiants stables, contrairement à data.gov.ma.
+- **Richesse sémantique** : Wikidata est le plus riche.
+- **Facilité d’appariement** : nécessite souvent une normalisation préalable.
+- **Réutilisabilité** : Wikidata et GeoNames sont pleinement compatibles LOD.
+
+---
 
 ## 4. Cas d'appariement manuel
 
-Présentez vos cas d'appariement les plus significatifs :
+| Entité locale | Type | Référentiel | Correspondance | Confiance | Décision |
+|--------------|------|------------|---------------|----------|----------|
+| Université Mohammed V - Rabat | Université | Wikidata | Q2915243 | Très élevé | Validé |
+| Université Hassan II - Casablanca | Université | Wikidata | Q1569037 | Très élevé | Validé |
+| Rabat | Ville | GeoNames | 2538475 | Très élevé | Validé |
+| Fès | Ville | GeoNames | 2548885 | Élevé | Validé |
+| FSJES Agdal Rabat | Établissement | Wikidata | Aucun | Moyen | Non apparié |
+| EMI Rabat | Établissement | Wikidata | Q3048450 | Élevé | Validé |
 
-- entité locale
-- référentiel cible
-- indices utilisés
-- niveau de confiance
-- ambiguïté éventuelle
-- décision finale
+### Analyse
+
+Les appariements sont fiables pour les universités et les villes, mais plus difficiles pour les établissements en raison de l’absence d’identifiants et des ambiguïtés liées aux noms.
+
+---
 
 ## 5. Plan de normalisation et d'identification
 
-Expliquez :
+### Entités prioritaires
 
-- quelles valeurs doivent être normalisées
-- quelles règles doivent être appliquées avant un futur travail RDF
-- quelles entités devraient recevoir un identifiant stable
-- comment ces identifiants pourraient être construits conceptuellement
+- Université
+- Établissement
+- Ville
+
+### Normalisation nécessaire
+
+- Standardisation des noms (suppression des accents, uniformisation)
+- Structuration des adresses
+- Conversion des numéros de téléphone en format standard
+- Nettoyage des valeurs numériques
+
+### Stratégie d’identifiants
+
+- Université : slug basé sur nom + ville
+- Établissement : clé composite (université + acronyme + ville)
+- Ville : identifiant GeoNames
+
+
+---
 
 ## 6. Analyse des risques
 
-Discutez :
+- Risque de faux appariement (homonymes)
+- Variations orthographiques
+- Données non normalisées
+- Couverture partielle des référentiels
 
-- des risques de faux appariement
-- des cas de désambiguïsation
-- des limites des référentiels choisis
-- des informations manquantes dans votre dataset
+ Exemple :
+"FSJES" existe dans plusieurs villes → ambigu sans contexte
+
+---
 
 ## 7. Difficultés rencontrées
 
-Expliquez les problèmes rencontrés pendant le travail hors séance :
+- Absence d’identifiants uniques dans le dataset
+- Données textuelles non normalisées
+- Difficulté de correspondance avec Wikidata pour certains établissements
+- Variabilité linguistique (français / arabe / anglais)
 
-- absence ou faiblesse des identifiants
-- qualité insuffisante de certaines valeurs
-- limites de couverture des référentiels
-- difficultés de désambiguïsation
+---
 
 ## 8. Conclusion
 
-Concluez sur la valeur de cette étude préparatoire et sur la manière dont elle facilite la séance suivante.
+Cette étude a permis de mettre en évidence le potentiel du dataset pour une transformation en Linked Open Data, tout en identifiant les principales limitations techniques.
+
+Les référentiels comme Wikidata et GeoNames offrent des opportunités d’enrichissement significatives, mais nécessitent un travail préalable de normalisation et de désambiguïsation.
+
+Ce travail constitue une étape essentielle pour préparer la modélisation RDF lors du TP2, en définissant une stratégie claire d’identification et d’alignement des entités.
+
+---
 
 ## Annexes éventuelles
 
-Vous pouvez ajouter si nécessaire :
-
-- une capture du jeu de données source
-- un schéma conceptuel
-- un tableau complémentaire de liens externes
+- Schéma conceptuel Mermaid
+- Tableau des correspondances externes

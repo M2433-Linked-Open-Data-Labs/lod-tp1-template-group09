@@ -19,7 +19,7 @@
 - **Unité d'observation** : Un établissement universitaire
 - **Granularité des enregistrements** : 1 ligne = 1 université
 
-👉 Explication : dataset simple → bon pour analyse mais limité pour LOD réel
+Explication : dataset simple → bon pour analyse mais limité pour LOD réel
 
 ---
 
@@ -46,7 +46,7 @@
 | Format exploitable | CSV structuré | 5 |
 | Présence d'une licence | Absente | 1 |
 
-👉 Explication : bon techniquement mais faible documentation
+Explication : bon techniquement mais faible documentation
 
 ---
 
@@ -74,7 +74,7 @@
 | 4 étoiles | Non | Pas d’URI |
 | 5 étoiles | Non | Pas de liens |
 
-👉 Niveau global : ⭐⭐⭐ (3/5)
+Niveau global : ⭐⭐⭐ (3/5)
 
 ---
 
